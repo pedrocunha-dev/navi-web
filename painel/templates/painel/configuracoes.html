@@ -1,10 +1,10 @@
 {% load static %}
 <!doctype html>
-<html lang="pt-br">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NAVI Web — Configurações</title>
+  <title>NAVI Web — Settings</title>
   <style>
     :root{
       --bg:#0b1220; --card:#111a2e; --muted:#9fb0d0; --text:#e9eefc;
@@ -58,10 +58,10 @@
   <div class="wrap">
     <div class="header">
       <div>
-        <div class="title">Configurações</div>
-        <div class="subtitle">Proxy de rede e chave de API para raspagem com IA.</div>
+        <div class="title">Settings</div>
+        <div class="subtitle">Network proxy and API key for AI-assisted scraping.</div>
       </div>
-      <a href="{% url 'dashboard' %}" class="back">← Voltar ao painel</a>
+      <a href="{% url 'dashboard' %}" class="back">← Back to panel</a>
     </div>
 
     {% for message in messages %}
@@ -73,34 +73,34 @@
     <form method="post" id="config-form">
       {% csrf_token %}
 
-      <!-- ── SEÇÃO: PROXY ─────────────────────────────────────────── -->
+      <!-- ── SECTION: PROXY ─────────────────────────────────────────── -->
       <div class="card">
-        <div class="section-title">Proxy de Rede</div>
+        <div class="section-title">Network Proxy</div>
 
         <label class="toggle-row" for="proxy-enabled-cb">
           <input type="checkbox" name="proxy_enabled" id="proxy-enabled-cb"
             {% if proxy_enabled %}checked{% endif %}>
           <div class="toggle-label">
-            <strong>Usar proxy corporativo</strong>
-            <span>Desmarque se estiver acessando fora da rede com proxy — a conexão será feita diretamente.</span>
+            <strong>Use proxy</strong>
+            <span>Uncheck if you are connecting directly to the internet without a proxy.</span>
           </div>
         </label>
 
         <div class="proxy-fields {% if not proxy_enabled %}disabled{% endif %}" id="proxy-fields">
 
           <div class="field">
-            <label for="proxy-server">Servidor (incluindo protocolo e porta)</label>
+            <label for="proxy-server">Server (including protocol and port)</label>
             <input type="text" name="proxy_server" id="proxy-server"
               value="{{ proxy_server }}"
-              placeholder="http://proxy-servidor.com:porta"
+              placeholder="http://proxy-server.com:port"
               {% if not proxy_enabled %}disabled{% endif %}>
-            <small>Exemplo: <code style="color:var(--primary);">http://proxy.empresa.com:8080</code> — apenas endereço e porta. Use os campos Usuário e Senha abaixo para autenticação.</small>
+            <small>Example: <code style="color:var(--primary);">http://proxy.company.com:8080</code> — address and port only. Use the Username and Password fields below for authentication.</small>
           </div>
 
           <hr class="divider">
 
           <div class="field">
-            <label for="proxy-username">Usuário</label>
+            <label for="proxy-username">Username</label>
             <input type="text" name="proxy_username" id="proxy-username"
               value="{{ proxy_username }}"
               placeholder="Username"
@@ -109,61 +109,61 @@
           </div>
 
           <div class="field" style="margin-bottom:0;">
-            <label for="proxy-password">Senha</label>
+            <label for="proxy-password">Password</label>
             <div class="password-wrap">
               <input type="password" name="proxy_password" id="proxy-password"
                 value="{{ proxy_password }}"
-                placeholder="Sua senha de internet"
+                placeholder="Your proxy password"
                 autocomplete="current-password"
                 {% if not proxy_enabled %}disabled{% endif %}>
-              <button type="button" class="show-pw" id="toggle-proxy-pw" title="Mostrar/ocultar senha">👁</button>
+              <button type="button" class="show-pw" id="toggle-proxy-pw" title="Show/hide password">👁</button>
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- ── SEÇÃO: GROQ API ─────────────────────────────────────── -->
+      <!-- ── SECTION: GROQ API ──────────────────────────────────────── -->
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <div class="section-title" style="margin-bottom:0;">API de Inteligência Artificial</div>
+          <div class="section-title" style="margin-bottom:0;">AI API</div>
           {% if groq_configurada %}
-            <span class="badge ok">● configurada</span>
+            <span class="badge ok">● configured</span>
           {% else %}
-            <span class="badge muted">● não configurada</span>
+            <span class="badge muted">● not configured</span>
           {% endif %}
         </div>
 
         <div class="info-box">
-          <p style="margin:0 0 10px;"><strong>O que é a Groq?</strong><br>
-          A <strong>Groq</strong> é uma plataforma de inferência em nuvem de altíssima velocidade, que disponibiliza modelos de linguagem gratuitamente para uso moderado. Não requer cartão de crédito para começar.</p>
+          <p style="margin:0 0 10px;"><strong>What is Groq?</strong><br>
+          <strong>Groq</strong> is a high-speed cloud inference platform that provides language models free of charge for moderate use. No credit card required to get started.</p>
 
-          <p style="margin:0 0 10px;"><strong>Para que serve aqui?</strong><br>
-          A chave é necessária <em>apenas</em> quando a opção <strong>"Raspar descrições individuais (IA)"</strong> está ativada no painel. Com ela, o NAVI visita cada anúncio individualmente, lê a descrição e usa IA para identificar automaticamente a <em>Área Construída</em> e a <em>Área do Terreno</em> — campos que normalmente não aparecem nos cards de listagem.</p>
+          <p style="margin:0 0 10px;"><strong>What is it used for here?</strong><br>
+          The key is required <em>only</em> when the <strong>"Scrape individual descriptions (AI)"</strong> option is enabled on the dashboard. With it, NAVI visits each listing individually, reads its full description, and uses AI to automatically extract the <em>Built Area</em> and <em>Land Area</em> — fields that typically do not appear on listing cards.</p>
 
-          <p style="margin:0 0 10px;"><strong>Modelo utilizado:</strong> <code>openai/gpt-oss-120b</code><br>
-          Modelo de linguagem <em>open-source</em> da OpenAI com capacidade de raciocínio avançado (<em>reasoning</em>), hospedado na infraestrutura da Groq. É especialmente eficaz na extração estruturada de informações de textos em português.</p>
+          <p style="margin:0 0 10px;"><strong>Model used:</strong> <code>openai/gpt-oss-120b</code><br>
+          An open-source language model with advanced reasoning capabilities, hosted on Groq's infrastructure. Particularly effective at structured information extraction from property description texts.</p>
 
-          <p style="margin:0;"><strong>Como obter a chave:</strong><br>
-          Acesse <a href="https://groq.com/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">groq.com</a>, crie uma conta gratuita → vá em <em>API Keys</em> → clique em <em>Create API Key</em>. Copie a chave gerada e cole no campo abaixo.</p>
+          <p style="margin:0;"><strong>How to get the key:</strong><br>
+          Go to <a href="https://groq.com/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">groq.com</a>, create a free account → go to <em>API Keys</em> → click <em>Create API Key</em>. Copy the generated key and paste it in the field below.</p>
         </div>
 
         <div class="field" style="margin-bottom:0;">
-          <label for="groq-api-key">Chave da API Groq</label>
+          <label for="groq-api-key">Groq API Key</label>
           <div class="password-wrap">
             <input type="password" name="groq_api_key" id="groq-api-key"
               value="{{ groq_api_key }}"
               placeholder="gsk_…"
               autocomplete="off">
-            <button type="button" class="show-pw" id="toggle-groq-pw" title="Mostrar/ocultar chave">👁</button>
+            <button type="button" class="show-pw" id="toggle-groq-pw" title="Show/hide key">👁</button>
           </div>
-          <small>Deixe em branco para desabilitar a raspagem com IA.</small>
+          <small>Leave blank to disable AI-assisted scraping.</small>
         </div>
       </div>
 
       <div class="actions">
-        <button type="submit" class="btn btn-primary">Salvar configurações</button>
-        <a href="{% url 'dashboard' %}" class="btn">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Save settings</button>
+        <a href="{% url 'dashboard' %}" class="btn">Cancel</a>
       </div>
     </form>
   </div>
@@ -180,13 +180,13 @@
     }
     cb.addEventListener("change", syncFields);
 
-    // Toggle senha do proxy
+    // Toggle proxy password visibility
     document.getElementById("toggle-proxy-pw").addEventListener("click", function() {
       const pw = document.getElementById("proxy-password");
       pw.type = pw.type === "password" ? "text" : "password";
     });
 
-    // Toggle chave da Groq
+    // Toggle Groq key visibility
     document.getElementById("toggle-groq-pw").addEventListener("click", function() {
       const pw = document.getElementById("groq-api-key");
       pw.type = pw.type === "password" ? "text" : "password";
