@@ -445,3 +445,28 @@ def unificar_arquivos(request: HttpRequest) -> HttpResponse:
 
     session_reset(request)
     return redirect(reverse("dashboard"))
+
+
+@require_GET
+def unificar_planilhas(request: HttpRequest) -> FileResponse:
+    from scrapers.imoveis_unificados import executar_unificacao_planilhas
+    executar_unificacao_planilhas()
+    out = DOWNLOADS_DIR / "imoveis_unificados.xlsx"
+    if not out.exists():
+        raise Http404("Unified spreadsheet was not generated.")
+    request.session["last_unified_xlsx"] = out.name
+    request.session.modified = True
+    clear_tmp_dir()
+    return stream_file(out)
+
+
+@require_GET
+def unificar_relatorios(request: HttpRequest) -> FileResponse:
+    from scrapers.relatorios_unificados import gerar_relatorio_fotografico
+    gerar_relatorio_fotografico()
+    out = DOWNLOADS_DIR / "relatorio_fotografico_consolidado.docx"
+    if not out.exists():
+        raise Http404("Consolidated photo report was not generated.")
+    request.session["last_unified_docx"] = out.name
+    request.session.modified = True
+    return stream_file(out)
