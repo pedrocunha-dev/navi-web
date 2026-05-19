@@ -1,0 +1,52 @@
+# Arquivos de build e distribuição
+build/
+dist/
+.venv-build/
+.pw-browsers/
+
+# Binários e pacotes
+*.exe
+*.zip
+*.pyz
+*.whl
+*.toc
+*.pkg
+*.spec
+!navi.spec
+
+# Arquivos compilados
+*.pyc
+__pycache__/
+
+# Arquivos temporários
+*.log
+*.tmp
+
+# Pastas de IDEs
+.vscode/
+.idea/
+
+# Arquivos de apresentação e documentação pessoal
+*.odp
+*.pdf
+*.odt
+*.txt
+!requirements.txt
+
+# Imagens e ícones (exceto assets estáticos do painel web)
+*.png
+*.jpg
+*.ico
+!navi.ico
+!painel/static/**/*.png
+!painel/static/**/*.jpg
+!painel/static/**/*.ico
+
+# Django
+db.sqlite3
+
+# Ambiente virtual
+.venv/
+
+# Claude Code local settings (project-specific, not for public repo)
+.claude/

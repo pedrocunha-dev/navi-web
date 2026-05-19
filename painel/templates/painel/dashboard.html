@@ -1,0 +1,305 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NAVI Web - Panel</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111a2e; --muted:#9fb0d0; --text:#e9eefc;
+      --primary:#ffcc66; --ok:#4ade80; --danger:#fb7185;
+      --line:rgba(255,255,255,.08);
+    }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#071022,#0b1220);color:var(--text);}
+    .wrap{max-width:980px;margin:0 auto;padding:32px 20px;}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;}
+    .title{font-size:28px;font-weight:800;letter-spacing:.3px;}
+    .subtitle{color:var(--muted);margin-top:6px;font-size:13px;line-height:1.35;}
+    .card{background:rgba(17,26,46,.85);border:1px solid var(--line);border-radius:18px;padding:18px 18px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25);}
+
+    /* Site grid */
+    .grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:14px;}
+    .site-row{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:start;}
+    .site-label{display:flex;flex-direction:column;gap:4px;padding-top:13px;}
+    .site-label span{color:var(--text);font-size:13px;font-weight:600;}
+    .site-label small{color:var(--muted);font-size:11px;line-height:1.3;}
+    .site-fields{display:flex;flex-direction:column;gap:8px;}
+
+    /* Inputs */
+    input[type="text"],input[type="url"]{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0b142a;color:var(--text);outline:none;box-sizing:border-box;font-size:13px;}
+    input[type="text"]:focus,input[type="url"]:focus{border-color:rgba(255,204,102,.6);box-shadow:0 0 0 3px rgba(255,204,102,.12);}
+
+    /* Page range control */
+    .page-range{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:8px 12px;}
+    .page-range-label{color:var(--muted);font-size:12px;font-weight:600;white-space:nowrap;}
+    .page-range-sep{color:var(--muted);font-size:12px;}
+    .page-range input[type="number"]{width:62px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:#0b142a;color:var(--text);outline:none;box-sizing:border-box;text-align:center;font-size:13px;}
+    .page-range input[type="number"]:focus{border-color:rgba(255,204,102,.6);box-shadow:0 0 0 2px rgba(255,204,102,.10);}
+    .page-hint{color:var(--muted);font-size:11px;font-style:italic;margin-left:4px;}
+
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;align-items:center;}
+    .btn{cursor:pointer;border:1px solid var(--line);background:#0b142a;color:var(--text);padding:10px 14px;border-radius:12px;font-weight:700;font-size:14px;}
+    .btn-primary{background:rgba(255,204,102,.16);border-color:rgba(255,204,102,.35);}
+    .btn-primary:hover:not(:disabled){background:rgba(255,204,102,.24);}
+    .btn-success{background:rgba(74,222,128,.14);border-color:rgba(74,222,128,.35);}
+    .btn-success:hover:not(:disabled){background:rgba(74,222,128,.22);}
+    .btn-danger{background:rgba(251,113,133,.14);border-color:rgba(251,113,133,.35);}
+    .btn-danger:hover:not(:disabled){background:rgba(251,113,133,.22);}
+    .btn:disabled{opacity:.35;cursor:not-allowed;}
+    .msg{margin-top:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);}
+    .msg.err{border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.10);}
+    .msg.ok{border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.08);}
+    .msg.warn{border-color:rgba(255,204,102,.35);background:rgba(255,204,102,.08);}
+    .divider{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);}
+
+    /* Spinner */
+    .spinner-wrap{display:flex;align-items:center;gap:12px;padding:14px 0 4px;}
+    .spinner{width:22px;height:22px;border:3px solid rgba(255,204,102,.2);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spinner-text{color:var(--primary);font-weight:600;font-size:14px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <div class="title">NAVI Web</div>
+        <div class="subtitle">
+          Scrape, consolidate and export real estate listings across multiple sites.
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;">
+        <a href="{% url 'configuracoes' %}" style="display:inline-flex;align-items:center;gap:8px;background:rgba(17,26,46,.85);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:8px 14px;text-decoration:none;color:var(--text);font-size:13px;font-weight:600;transition:border-color .2s;" onmouseover="this.style.borderColor='rgba(255,204,102,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.08)'">
+          ⚙ Settings
+        </a>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+          {% if proxy_ativo %}
+            <span style="font-size:11px;color:var(--ok);">● Proxy: active</span>
+          {% else %}
+            <span style="font-size:11px;color:var(--muted);">● Proxy: disabled</span>
+          {% endif %}
+          {% if groq_configurada %}
+            <span style="font-size:11px;color:var(--ok);">● AI: configured</span>
+          {% else %}
+            <span style="font-size:11px;color:var(--muted);">● AI: not configured</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% for message in messages %}
+      <div class="msg {% if message.tags == 'error' %}err{% elif message.tags == 'warning' %}warn{% else %}ok{% endif %}" style="margin-bottom:12px;">
+        {{ message }}
+      </div>
+    {% endfor %}
+
+    <div class="card">
+      <form method="post" id="scrape-form">
+        {% csrf_token %}
+
+        <div class="grid">
+
+          <!-- Site 1 -->
+          <div class="site-row">
+            <div class="site-label">
+              <span>Site 1</span>
+            </div>
+            <div class="site-fields">
+              <input type="text" name="url_site1" placeholder="Paste the search URL for Site 1">
+              <div style="font-size:11px;color:var(--muted);background:rgba(255,204,102,.06);border:1px solid rgba(255,204,102,.2);border-radius:8px;padding:7px 10px;line-height:1.5;">
+                This scraper opens a visible browser window. If a CAPTCHA appears, solve it manually in the opened window — scraping will resume automatically afterwards.
+              </div>
+              <div class="page-range">
+                <span class="page-range-label">Pages</span>
+                <span class="page-range-sep">from</span>
+                <input type="number" name="pagina_inicio_site1" value="1" min="1">
+                <span class="page-range-sep">to</span>
+                <input type="number" name="pagina_fim_site1" value="1" min="1">
+                <span class="page-hint">— page range to scrape</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Site 2 -->
+          <div class="site-row">
+            <div class="site-label">
+              <span>Site 2</span>
+            </div>
+            <div class="site-fields">
+              <input type="text" name="url_site2" placeholder="Paste the search URL for Site 2">
+              <div class="page-range">
+                <span class="page-range-label">Pages</span>
+                <span class="page-range-sep">from</span>
+                <input type="number" name="pagina_inicio_site2" value="1" min="1">
+                <span class="page-range-sep">to</span>
+                <input type="number" name="pagina_fim_site2" value="1" min="1">
+                <span class="page-hint">— page range to scrape</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Site 3 -->
+          <div class="site-row">
+            <div class="site-label">
+              <span>Site 3</span>
+            </div>
+            <div class="site-fields">
+              <input type="text" name="url_site3" placeholder="Paste the search URL for Site 3">
+              <div class="page-range">
+                <span class="page-range-label">Pages</span>
+                <span class="page-range-sep">from</span>
+                <input type="number" name="pagina_inicio_site3" value="1" min="1">
+                <span class="page-range-sep">to</span>
+                <input type="number" name="pagina_fim_site3" value="1" min="1">
+                <span class="page-hint">— page range to scrape</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AI description mode -->
+        <div style="margin-top:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:12px 16px;">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+            <input type="checkbox" name="raspar_descricao" id="raspar-desc-cb" style="margin-top:3px;flex-shrink:0;accent-color:var(--primary);">
+            <span>
+              <strong style="color:var(--text);font-size:13px;">Scrape individual descriptions (AI)</strong><br>
+              <span style="color:var(--muted);font-size:11px;line-height:1.55;">
+                Visits each listing individually to read its full description and uses AI to identify
+                <em>Built Area</em> and <em>Land Area</em>. Adds these columns to the batch spreadsheet.<br>
+                <span style="color:#fb7185;font-weight:600;">⚠ Warning:</span> this option significantly slows down scraping
+                and opens a visible browser for all sites — CAPTCHAs may appear on any of them.
+              </span>
+            </span>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" type="submit" id="scrape-btn"
+            {% if scraping_running %}disabled{% endif %}>
+            Scrape data
+          </button>
+          <div style="font-size:12px;color:var(--muted);">Fill in at least 1 URL. Pages 1–1 scrapes only the first page.</div>
+        </div>
+      </form>
+
+      <div id="progress-area" style="display:{% if scraping_running %}flex{% else %}none{% endif %};align-items:center;gap:16px;flex-wrap:wrap;padding:14px 0 4px;">
+        <div class="spinner-wrap" style="padding:0;">
+          <div class="spinner"></div>
+          <div>
+            <div class="spinner-text" id="spinner-main">Scraping in progress… please wait.</div>
+            <div id="spinner-detail" style="color:var(--muted);font-size:12px;margin-top:3px;"></div>
+          </div>
+        </div>
+        <button class="btn btn-danger" type="button" id="cancel-btn" style="font-size:13px;padding:7px 14px;">
+          Cancel
+        </button>
+      </div>
+
+      <div id="result-area">
+        {% if can_download %}
+        <div class="msg ok" style="margin-top:14px;">
+          Scraping complete! Files are available in the Downloads folder.
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="divider actions">
+        <form method="post" action="{% url 'unificar_arquivos' %}" id="unificar-form">
+          {% csrf_token %}
+          <button class="btn btn-success" type="submit" id="unificar-btn"
+            {% if not can_download %}disabled{% endif %}>
+            Consolidate files
+          </button>
+        </form>
+
+        <form method="post" action="{% url 'limpar_tmp' %}">
+          {% csrf_token %}
+          <button class="btn btn-danger" type="submit"
+            {% if not can_download %}disabled{% endif %}>
+            Clear temp files
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const statusUrl = "{% url 'scraping_status' %}";
+    let polling = {{ scraping_running|yesno:"true,false" }};
+
+    function updateSpinner(data) {
+      const detail = document.getElementById("spinner-detail");
+      if (data.current_site && data.total_pages > 0) {
+        const suffix = data.total_pages > 1
+          ? ` — page ${data.current_page_num} of ${data.total_pages}`
+          : "";
+        detail.textContent = `Scraping ${data.current_site}${suffix}`;
+      } else {
+        detail.textContent = "";
+      }
+    }
+
+    function poll() {
+      fetch(statusUrl)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === "running" || data.status === "starting") {
+            document.getElementById("progress-area").style.display = "";
+            document.getElementById("scrape-btn").disabled = true;
+            updateSpinner(data);
+            setTimeout(poll, 3000);
+          } else if (data.status === "done" || data.status === "error" || data.status === "cancelled") {
+            window.location.reload();
+          } else {
+            polling = false;
+          }
+        })
+        .catch(() => setTimeout(poll, 5000));
+    }
+
+    if (polling) {
+      document.getElementById("progress-area").style.display = "";
+      setTimeout(poll, 3000);
+    }
+
+    document.getElementById("scrape-form").addEventListener("submit", function() {
+      document.getElementById("scrape-btn").disabled = true;
+      document.getElementById("progress-area").style.display = "";
+      setTimeout(poll, 5000);
+    });
+
+    document.getElementById("cancel-btn").addEventListener("click", function() {
+      this.disabled = true;
+      document.getElementById("spinner-main").textContent = "Cancelling… waiting for current page to finish.";
+      document.getElementById("spinner-detail").textContent = "";
+      const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+      fetch("{% url 'cancelar_raspagem' %}", {
+        method: "POST",
+        headers: {"X-CSRFToken": csrfToken},
+      });
+    });
+
+    document.getElementById("unificar-form").addEventListener("submit", function() {
+      document.getElementById("unificar-btn").disabled = true;
+    });
+
+    // Ensure end >= start for each page range pair
+    document.querySelectorAll('.page-range').forEach(function(range) {
+      const inputs = range.querySelectorAll('input[type="number"]');
+      const inicio = inputs[0], fim = inputs[1];
+      inicio.addEventListener('change', function() {
+        if (parseInt(fim.value) < parseInt(inicio.value)) {
+          fim.value = inicio.value;
+        }
+      });
+      fim.addEventListener('change', function() {
+        if (parseInt(fim.value) < parseInt(inicio.value)) {
+          fim.value = inicio.value;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

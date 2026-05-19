@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NAVI - Nova Raspagem</title>
+</head>
+<body>
+    <h2>Nova Raspagem</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Executar</button>
+    </form>
+</body>
+</html>

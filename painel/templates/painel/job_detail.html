@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NAVI - Resultado</title>
+</head>
+<body>
+    <h2>Resultado da Raspagem</h2>
+
+    <p>Status: {{ status }}</p>
+
+    {% if download %}
+        <a href="{% url 'download' download %}">Baixar CSV</a>
+    {% endif %}
+</body>
+</html>

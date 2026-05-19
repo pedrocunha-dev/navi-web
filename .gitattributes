@@ -1,0 +1,17 @@
+# Default: text com line endings normalizados
+* text=auto
+
+# Sempre CRLF (Windows-specific)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Sempre LF (Unix/scripts)
+*.sh text eol=lf
+
+# Binarios (sem conversao)
+*.ico binary
+*.png binary
+*.jpg binary
+*.sqlite3 binary
+*.zip binary
+*.exe binary

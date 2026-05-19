@@ -1,0 +1,196 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NAVI Web — Configurações</title>
+  <style>
+    :root{
+      --bg:#0b1220; --card:#111a2e; --muted:#9fb0d0; --text:#e9eefc;
+      --primary:#ffcc66; --ok:#4ade80; --danger:#fb7185;
+      --line:rgba(255,255,255,.08);
+    }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#071022,#0b1220);color:var(--text);}
+    .wrap{max-width:680px;margin:0 auto;padding:32px 20px;}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;}
+    .title{font-size:24px;font-weight:800;letter-spacing:.3px;}
+    .subtitle{color:var(--muted);margin-top:6px;font-size:13px;}
+    .back{color:var(--muted);font-size:13px;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .15s;flex-shrink:0;}
+    .back:hover{color:var(--text);}
+    .section-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;}
+    .card{background:rgba(17,26,46,.85);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.25);margin-bottom:20px;}
+    .field{margin-bottom:18px;}
+    .field label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:var(--text);}
+    .field small{display:block;color:var(--muted);font-size:11px;margin-top:5px;line-height:1.4;}
+    input[type="text"],input[type="url"],input[type="password"]{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0b142a;color:var(--text);outline:none;box-sizing:border-box;font-size:13px;}
+    input[type="text"]:focus,input[type="url"]:focus,input[type="password"]:focus{border-color:rgba(255,204,102,.6);box-shadow:0 0 0 3px rgba(255,204,102,.12);}
+    input:disabled{opacity:.35;cursor:not-allowed;}
+    .toggle-row{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:22px;cursor:pointer;}
+    .toggle-row input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;accent-color:var(--primary);cursor:pointer;}
+    .toggle-row .toggle-label{flex:1;}
+    .toggle-label strong{display:block;font-size:14px;color:var(--text);}
+    .toggle-label span{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.4;}
+    .proxy-fields{transition:opacity .2s;}
+    .proxy-fields.disabled{opacity:.4;pointer-events:none;}
+    .password-wrap{position:relative;}
+    .password-wrap input{padding-right:44px;}
+    .show-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:4px;}
+    .show-pw:hover{color:var(--text);}
+    .info-box{background:rgba(255,204,102,.06);border:1px solid rgba(255,204,102,.18);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:12px;color:var(--muted);line-height:1.65;}
+    .info-box strong{color:var(--text);}
+    .info-box code{color:var(--primary);background:rgba(255,204,102,.1);padding:1px 5px;border-radius:5px;font-size:11px;}
+    .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+    .badge.ok{color:var(--ok);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);}
+    .badge.muted{color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);}
+    .actions{display:flex;gap:10px;margin-top:8px;align-items:center;}
+    .btn{cursor:pointer;border:1px solid var(--line);background:#0b142a;color:var(--text);padding:10px 20px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;}
+    .btn-primary{background:rgba(255,204,102,.16);border-color:rgba(255,204,102,.35);}
+    .btn-primary:hover{background:rgba(255,204,102,.24);}
+    .btn:hover{background:rgba(255,255,255,.06);}
+    .msg{margin-bottom:18px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:13px;}
+    .msg.err{border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.10);}
+    .msg.ok{border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.08);}
+    .divider{border:none;border-top:1px dashed var(--line);margin:20px 0;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <div class="title">Configurações</div>
+        <div class="subtitle">Proxy de rede e chave de API para raspagem com IA.</div>
+      </div>
+      <a href="{% url 'dashboard' %}" class="back">← Voltar ao painel</a>
+    </div>
+
+    {% for message in messages %}
+      <div class="msg {% if message.tags == 'error' %}err{% else %}ok{% endif %}" style="margin-bottom:16px;">
+        {{ message }}
+      </div>
+    {% endfor %}
+
+    <form method="post" id="config-form">
+      {% csrf_token %}
+
+      <!-- ── SEÇÃO: PROXY ─────────────────────────────────────────── -->
+      <div class="card">
+        <div class="section-title">Proxy de Rede</div>
+
+        <label class="toggle-row" for="proxy-enabled-cb">
+          <input type="checkbox" name="proxy_enabled" id="proxy-enabled-cb"
+            {% if proxy_enabled %}checked{% endif %}>
+          <div class="toggle-label">
+            <strong>Usar proxy corporativo</strong>
+            <span>Desmarque se estiver acessando fora da rede com proxy — a conexão será feita diretamente.</span>
+          </div>
+        </label>
+
+        <div class="proxy-fields {% if not proxy_enabled %}disabled{% endif %}" id="proxy-fields">
+
+          <div class="field">
+            <label for="proxy-server">Servidor (incluindo protocolo e porta)</label>
+            <input type="text" name="proxy_server" id="proxy-server"
+              value="{{ proxy_server }}"
+              placeholder="http://proxy-servidor.com:porta"
+              {% if not proxy_enabled %}disabled{% endif %}>
+            <small>Exemplo: <code style="color:var(--primary);">http://proxy.empresa.com:8080</code> — apenas endereço e porta. Use os campos Usuário e Senha abaixo para autenticação.</small>
+          </div>
+
+          <hr class="divider">
+
+          <div class="field">
+            <label for="proxy-username">Usuário</label>
+            <input type="text" name="proxy_username" id="proxy-username"
+              value="{{ proxy_username }}"
+              placeholder="Username"
+              autocomplete="username"
+              {% if not proxy_enabled %}disabled{% endif %}>
+          </div>
+
+          <div class="field" style="margin-bottom:0;">
+            <label for="proxy-password">Senha</label>
+            <div class="password-wrap">
+              <input type="password" name="proxy_password" id="proxy-password"
+                value="{{ proxy_password }}"
+                placeholder="Sua senha de internet"
+                autocomplete="current-password"
+                {% if not proxy_enabled %}disabled{% endif %}>
+              <button type="button" class="show-pw" id="toggle-proxy-pw" title="Mostrar/ocultar senha">👁</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── SEÇÃO: GROQ API ─────────────────────────────────────── -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div class="section-title" style="margin-bottom:0;">API de Inteligência Artificial</div>
+          {% if groq_configurada %}
+            <span class="badge ok">● configurada</span>
+          {% else %}
+            <span class="badge muted">● não configurada</span>
+          {% endif %}
+        </div>
+
+        <div class="info-box">
+          <p style="margin:0 0 10px;"><strong>O que é a Groq?</strong><br>
+          A <strong>Groq</strong> é uma plataforma de inferência em nuvem de altíssima velocidade, que disponibiliza modelos de linguagem gratuitamente para uso moderado. Não requer cartão de crédito para começar.</p>
+
+          <p style="margin:0 0 10px;"><strong>Para que serve aqui?</strong><br>
+          A chave é necessária <em>apenas</em> quando a opção <strong>"Raspar descrições individuais (IA)"</strong> está ativada no painel. Com ela, o NAVI visita cada anúncio individualmente, lê a descrição e usa IA para identificar automaticamente a <em>Área Construída</em> e a <em>Área do Terreno</em> — campos que normalmente não aparecem nos cards de listagem.</p>
+
+          <p style="margin:0 0 10px;"><strong>Modelo utilizado:</strong> <code>openai/gpt-oss-120b</code><br>
+          Modelo de linguagem <em>open-source</em> da OpenAI com capacidade de raciocínio avançado (<em>reasoning</em>), hospedado na infraestrutura da Groq. É especialmente eficaz na extração estruturada de informações de textos em português.</p>
+
+          <p style="margin:0;"><strong>Como obter a chave:</strong><br>
+          Acesse <a href="https://groq.com/" target="_blank" rel="noopener" style="color:var(--primary);text-decoration:none;font-weight:600;">groq.com</a>, crie uma conta gratuita → vá em <em>API Keys</em> → clique em <em>Create API Key</em>. Copie a chave gerada e cole no campo abaixo.</p>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label for="groq-api-key">Chave da API Groq</label>
+          <div class="password-wrap">
+            <input type="password" name="groq_api_key" id="groq-api-key"
+              value="{{ groq_api_key }}"
+              placeholder="gsk_…"
+              autocomplete="off">
+            <button type="button" class="show-pw" id="toggle-groq-pw" title="Mostrar/ocultar chave">👁</button>
+          </div>
+          <small>Deixe em branco para desabilitar a raspagem com IA.</small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Salvar configurações</button>
+        <a href="{% url 'dashboard' %}" class="btn">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Toggle proxy fields
+    const cb = document.getElementById("proxy-enabled-cb");
+    const fields = document.getElementById("proxy-fields");
+
+    function syncFields() {
+      const on = cb.checked;
+      fields.classList.toggle("disabled", !on);
+      fields.querySelectorAll("input").forEach(el => el.disabled = !on);
+    }
+    cb.addEventListener("change", syncFields);
+
+    // Toggle senha do proxy
+    document.getElementById("toggle-proxy-pw").addEventListener("click", function() {
+      const pw = document.getElementById("proxy-password");
+      pw.type = pw.type === "password" ? "text" : "password";
+    });
+
+    // Toggle chave da Groq
+    document.getElementById("toggle-groq-pw").addEventListener("click", function() {
+      const pw = document.getElementById("groq-api-key");
+      pw.type = pw.type === "password" ? "text" : "password";
+    });
+  </script>
+</body>
+</html>
